@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Дмитрий Минеев](https://up.htmlacademy.ru/javascript/12/user/631879).
-* Наставник: `Неизвестно`.
+* Наставник: `Дмитрий Донецкий`.
 
 ---
 
