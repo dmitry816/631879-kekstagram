@@ -9,49 +9,55 @@ var COMMENTS = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 var PHOTO_OBJECTS_NUMBER = 25;
-var photos = [];
-var pictureTemplate = document.querySelector('#picture-template').content;
-var picturesBlock = document.querySelector('.pictures');
 
-var generatePhotoObjects = function (photosNumbers) {
-  for (var i = 0; i < photosNumbers; i++) {
-    photos[i] = {
-      url: 'photos/{{' + i + '}}.jpg',
-      likes: Math.round(Math.random() * (200 - 15) + 15),
-      comments: COMMENTS[Math.round(Math.random() * COMMENTS.length)]
-    };
-  }
+
+var getRandomRange = function (min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
 };
 
-// fill with object photos array
-photos = generatePhotoObjects(PHOTO_OBJECTS_NUMBER);
+var getRandomElement = function (arr) {
+  return arr[getRandomRange(0, arr.length)];
+};
 
-var createPictureTemplate = function () {
+var generatePhotoObjects = function (photosNumbers) {
+  var photos = [];
+  for (var i = 0; i < photosNumbers; i++) {
+    photos[i] = {
+      url: 'photos/' + (i + 1) + '.jpg',
+      likes: getRandomRange(15, 200),
+      comments: [getRandomElement(COMMENTS)]
+    };
+  }
+  return photos;
+};
+
+// variable with object photos array
+var photos = generatePhotoObjects(PHOTO_OBJECTS_NUMBER);
+var pictureTemplate = document.querySelector('#picture-template').content;
+
+var createPictureTemplate = function (photoObjectsArray) {
   var pictureElement = pictureTemplate.cloneNode(true);
-  pictureElement.querySelector('img').src = photos.url;
-  pictureElement.querySelector('.picture-likes').textContent = photos.likes;
-  pictureElement.querySelector('.picture-comments').textContent = photos.comments;
+  pictureElement.querySelector('img').src = photoObjectsArray.url;
+  pictureElement.querySelector('.picture-likes').textContent = photoObjectsArray.likes;
+  pictureElement.querySelector('.picture-comments').textContent = photoObjectsArray.comments;
   return pictureElement;
 };
 
-var renderPhotos = function (elementsNumber) {
+var renderPhotos = function () {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < elementsNumber; i++) {
+  for (var i = 0; i < photos.length; i++) {
     fragment.appendChild(createPictureTemplate(photos[i]));
   }
-  picturesBlock.appendChild(fragment);
+  document.querySelector('.pictures').appendChild(fragment);
 };
 
-renderPhotos(PHOTO_OBJECTS_NUMBER);
-
-var showGalleryOverlay = document.querySelector('.gallery-overlay');
-showGalleryOverlay.classList.remove('hidden');
-
 var fillGallery = function (photosArray) {
-  showGalleryOverlay.querySelector('img').src = photosArray[0].url;
-  showGalleryOverlay.querySelector('.picture-likes').textContent = photosArray[0].likes;
-  showGalleryOverlay.querySelector('.picture-comments').textContent = photosArray[0].comments;
+  renderPhotos(photosArray);
+  var showGalleryOverlay = document.querySelector('.gallery-overlay');
+  showGalleryOverlay.classList.remove('hidden');
+  showGalleryOverlay.querySelector('.gallery-overlay-image').src = photosArray[0].url;
+  showGalleryOverlay.querySelector('.likes-count').textContent = photosArray[0].likes;
+  showGalleryOverlay.querySelector('.comments-count').textContent = photosArray[0].comments;
 };
 
 fillGallery(photos);
-
