@@ -39,7 +39,7 @@ var createPictureTemplate = function (photoObjectsArray) {
   var pictureElement = pictureTemplate.cloneNode(true);
   pictureElement.querySelector('img').src = photoObjectsArray.url;
   pictureElement.querySelector('.picture-likes').textContent = photoObjectsArray.likes;
-  pictureElement.querySelector('.picture-comments').textContent = photoObjectsArray.comments;
+  pictureElement.querySelector('.picture-comments').textContent = photoObjectsArray.comments.length;
   return pictureElement;
 };
 
@@ -57,7 +57,7 @@ var fillGallery = function (photosArray) {
   showGalleryOverlay.classList.remove('hidden');
   showGalleryOverlay.querySelector('.gallery-overlay-image').src = photosArray[0].url;
   showGalleryOverlay.querySelector('.likes-count').textContent = photosArray[0].likes;
-  showGalleryOverlay.querySelector('.comments-count').textContent = photosArray[0].comments;
+  showGalleryOverlay.querySelector('.comments-count').textContent = photosArray[0].comments.length;
 };
 
 fillGallery(photos);
