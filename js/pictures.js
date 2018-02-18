@@ -8,14 +8,46 @@ var COMMENTS = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
+var MIN_LIKES = 15;
+var MAX_LIKES = 200;
 var PHOTO_OBJECTS_NUMBER = 25;
 var ESC_KEYCODE = 27;
+var MAX_IMAGE_SIZE = 100;
+var MIN_IMAGE_SIZE = 25;
+var SIZE_STEP = 25;
 var showGalleryOverlay = document.querySelector('.gallery-overlay');
 var uploadOverlay = document.querySelector('.upload-overlay');
 var uploadFile = document.querySelector('#upload-file');
 var uploadFormCancel = document.querySelector('.upload-form-cancel');
 var uploadEffectLevelPin = document.querySelector('.upload-effect-level-pin');
-/* var uploadEffectLevelValue = document.querySelector('.upload-effect-level-value');*/
+var uploadResizeControlsButtonDec = document.querySelector('.upload-resize-controls-button-dec');
+var uploadResizeControlsButtonInc = document.querySelector('.upload-resize-controls-button-inc');
+var uploadResizeControlsValue = document.querySelector('.upload-resize-controls-value');
+var effectImagePreview = document.querySelector('.effect-image-preview');
+
+var decreaseImage = function () {
+  var currentSize = parseInt(uploadResizeControlsValue.value, 10);
+  var decreasedSize = currentSize - SIZE_STEP;
+
+  if (decreasedSize < MIN_IMAGE_SIZE) {
+    return;
+  }
+  calculateImageSize(decreasedSize);
+};
+
+var increaseImage = function () {
+  var currentSize = parseInt(uploadResizeControlsValue.value, 10);
+  var increasedSize = currentSize + SIZE_STEP;
+  if (increasedSize > MAX_IMAGE_SIZE) {
+    return;
+  }
+  calculateImageSize(increasedSize);
+};
+
+var calculateImageSize = function (size) {
+  uploadResizeControlsValue.setAttribute('value', size + '%');
+  effectImagePreview.style.transform = 'scale(' + size / 100 + ')';
+};
 
 var onEditorFormEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
@@ -30,10 +62,13 @@ var showEditor = function () {
 
 var closeEditor = function () {
   uploadOverlay.classList.add('hidden');
-  document.addEventListener('keydown', onEditorFormEscPress);
+  document.removeEventListener('keydown', onEditorFormEscPress);
+  uploadFile.value = '';
 };
 
+// events
 uploadFile.addEventListener('change', function () {
+
   showEditor();
 });
 
@@ -44,6 +79,9 @@ uploadFormCancel.addEventListener('click', function () {
 uploadEffectLevelPin.addEventListener('mouseup', function () {
   // расчитать положение пина слайдера
 });
+
+uploadResizeControlsButtonDec.addEventListener('click', decreaseImage);
+uploadResizeControlsButtonInc.addEventListener('click', increaseImage);
 
 var getRandomRange = function (min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
@@ -58,7 +96,7 @@ var generatePhotoObjects = function (photosNumbers) {
   for (var i = 0; i < photosNumbers; i++) {
     photos[i] = {
       url: 'photos/' + (i + 1) + '.jpg',
-      likes: getRandomRange(15, 200),
+      likes: getRandomRange(MIN_LIKES, MAX_LIKES),
       comments: [getRandomElement(COMMENTS)]
     };
   }
